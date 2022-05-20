@@ -1,7 +1,37 @@
+import { FormEvent, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import axios from 'axios'
 
 const Home: NextPage = () => {
+  const [lyric, setLyric] = useState('')
+  const [artist, setArtist] = useState('')
+  const [song, setSong] = useState('')
+  const apikey = process.env.API_KEY
+
+  const getData = () => {
+    axios
+      .get(`https://api.vagalume.com.br/search.php`, {
+        params: {
+          art: artist,
+          mus: song,
+          apikey
+        }
+      })
+      .then(response => {
+        if (response.data.mus) setLyric(response.data.mus[0].text)
+      })
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const handleSearch = (e: FormEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    getData()
+  }
+
   return (
     <div>
       <Head>
@@ -11,7 +41,29 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <h1 className="text-center">Cifras</h1>
+        <form>
+          <fieldset className="border p-2 flex-col rounded">
+            <label htmlFor="artist">Artist</label>
+            <input
+              type="text"
+              id="artist"
+              value={artist}
+              onChange={text => setArtist(text.target.value)}
+              placeholder="Artist"
+            />
+            <label htmlFor="song">Song</label>
+            <input
+              type="text"
+              id="song"
+              value={song}
+              onChange={text => setSong(text.target.value)}
+              placeholder="Song"
+            />
+            <button onClick={handleSearch}>Procurar</button>
+          </fieldset>
+        </form>
+        <h1 className="text-center">{artist}</h1>
+        {lyric && <p>{lyric}</p>}
       </main>
     </div>
   )
