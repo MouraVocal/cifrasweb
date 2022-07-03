@@ -15,7 +15,7 @@ export function Form({ setIsLoading, setArtist, setSong, setLyric }: Props) {
   const artist = useRef<HTMLInputElement>(null)
   const song = useRef<HTMLInputElement>(null)
 
-  const apikey = process.env.API_KEY
+  const apikey = process.env.VAGALUME_API_KEY
 
   const getData = () => {
     setIsLoading(true)
